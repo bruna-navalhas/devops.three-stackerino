@@ -50,6 +50,17 @@ def list_messages():
         ],
     })
 
+@app.get("/api/stats")
+def get_stats():
+    try:
+        with connect_db() as conn:
+            (total,) = conn.execute(
+                "SELECT COUNT(*) FROM messages;"
+            ).fetchone()
+    except psycopg.Error as err:
+        return db_error(err)
+
+    return jsonify({"total_messages": total})
 
 @app.post("/api/messages")
 def create_message():
